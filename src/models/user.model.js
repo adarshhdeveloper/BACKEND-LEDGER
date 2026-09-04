@@ -39,6 +39,12 @@ userSchema.pre("save", async function(next) {
 
 /// Login ke time password compare karne ke liye
 // true / false return karega
-userSchema.methods.comparePassword = async function (password) {
-    return await bcrypt.compare(password,this.password);
+userSchema.methods.comparePassword = async function(password) {
+    return await bcrypt.compare(password, this.password);
 };
+
+//model creation 
+
+const userModle = mongoose.model("user", userSchema)
+
+module.exports = userModle
