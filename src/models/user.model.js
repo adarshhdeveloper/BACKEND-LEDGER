@@ -27,14 +27,14 @@ const userSchema = new mongoose.Schema({
 
 // User password hashing using pre middleware
 // Register/create/update ke time password ko hash karega
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function() {
     if (!this.isModified("password")) {
-        return next();
+        return
     }
     const hash = await bcrypt.hash(this.password, 10)
     this.password = hash;
 
-    return next();
+    return
 });
 
 /// Login ke time password compare karne ke liye
@@ -45,6 +45,6 @@ userSchema.methods.comparePassword = async function(password) {
 
 //model creation 
 
-const userModle = mongoose.model("user", userSchema)
+const userModel = mongoose.model("user", userSchema)
 
-module.exports = userModle   
+module.exports = userModel      

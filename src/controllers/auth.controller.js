@@ -1,7 +1,9 @@
-const userModle = require("../models/user.model")
+const userModel = require("../models/user.model")
+const jwt = require("jsonwebtoken")
+
 
 /**
- * - user register controller
+ * - User register controller
  * - POST /api/auth/register
  */
 async function userRegisterController(req, res) {
@@ -12,7 +14,7 @@ async function userRegisterController(req, res) {
     } = req.body // ye dala lane ke liye express.json() middelware require hii app.js me 
 
     //check for user already exists or not 
-    const isExists = await userModle.findOne({
+    const isExists = await userModel.findOne({
         email: email
     })
 
@@ -23,17 +25,83 @@ async function userRegisterController(req, res) {
         })
     }
     //now if all ok then user creation 
-    const user = await userModle.create({
+    const user = await userModel.create({
         email,
         password,
         name
     })
-    
+
     //token creation for user staty login 
-    
+    const token = jwt.sign({
+        userId: user._id
+    }, process.env.JWT_SECRET, {
+        expiresIn: "3d"
+    })
+
+    res.cookie("jwt_token", token)
+    res.status(201).json({
+        message: "User register successfully.",
+        user: {
+            _id: user._id,
+            Email: user.email,
+            name: user.name
+        },
+        token
+    })
+
+
+}
+
+/**
+ * -User login controller
+ * - POST /api/auth/login
+ */
+async function userLoginController(req, res) {
+    const {
+        email,
+        password
+    } = req.body
+
+    //check for email and pasword 
+    const user = await userModel.findOne({
+        email
+    }).select("+password")
+
+    if (!user) {
+        return res.status(401).json({
+            message: "Invalid email or password"
+        })
+    }
+
+    const isValidPassword = await user.comparePassword(password)
+
+    if (!isValidPassword) {
+        return res.status(401).json({
+            message: "Invalid email or passwword"
+        })
+    }
+    //if all clear then token create
+    const token = jwt.sign({
+        userId: user._id
+    }, process.env.JWT_SECRET, {
+        expiresIn: "3d"
+    })
+    res.cookie("jwt_token", token)
+
+    res.status(200).json({
+        message: "User login successfully.",
+        user: {
+            _id: user._id,
+            Email: user.email,
+            Name: user.name
+        },
+        token
+    })
+
 
 }
 
 module.exports = {
-    userRegisterController
+    userRegisterController,
+    userLoginController
 }
