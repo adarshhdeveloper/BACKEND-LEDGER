@@ -3,40 +3,40 @@ const mongoose = require("mongoose")
 
 const transactionSchema = new mongoose.Schema({
 
-    fromAccount:{
+    fromAccount: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"account",
-        required:[true,"Transaction must be associated with a from account."],
-        index:true
+        ref: "account",
+        required: [true, "Transaction must be associated with a from account."],
+        index: true
     },
-    toAccount:{
+    toAccount: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"account",
-        required:[true,"Transaction must be associated with a to account."],
-        index:true
-    }
-    status:{
+        ref: "account",
+        required: [true, "Transaction must be associated with a to account."],
+        index: true
+    },
+    status: {
         type: String,
-        enum:{
-            values:["PENDING","COMPLETED","FAILDE","REVERSED"],
-            message:"Status can be either PENDING , COMPLETED , FAILED or REVERSED",
+        enum: {
+            values: ["PENDING", "COMPLETED", "FAILED", "REVERSED"],
+            message: "Status can be either PENDING , COMPLETED , FAILED or REVERSED",
         },
-        default:"PENDING"    
+        default: "PENDING"
     },
-    amount:{
-        type:Number,
-        required : [true,"Amount is required for creating a transaction "],
-        min :[0,"Transaction amount cannot be negative"]
+    amount: {
+        type: Number,
+        required: [true, "Amount is required for creating a transaction "],
+        min: [0, "Transaction amount cannot be negative"]
     },
-    idempotencyKey:{
-        type:String,
-        require:[true,"Ideompotency key is required for creating a transaction"],
-        index:true,
-        unique:true,
-        comment:"Ye same payment ko 2 bar karne se rokti hii , hamesa client side se generate hoti hii ek transaction ke liye ek hi key hogi alway unique hoti hi " 
+    idempotencyKey: {
+        type: String,
+        require: [true, "Ideompotency key is required for creating a transaction"],
+        index: true,
+        unique: true,
+        comment: "Ye same payment ko 2 bar karne se rokti hii , hamesa client side se generate hoti hii ek transaction ke liye ek hi key hogi alway unique hoti hi "
     }
-},{
-    timestamps:true
+}, {
+    timestamps: true
 })
 
 const transactionModel = mongoose.model("transaction,transactionSchema")
