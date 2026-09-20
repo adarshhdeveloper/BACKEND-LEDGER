@@ -68,3 +68,5 @@ module.exports = {
     sendTransactionEmail,
     sendTransactionFailureEmail
 }
+
+//all  mail  service Are exports from here 
