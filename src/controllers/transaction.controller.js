@@ -12,7 +12,7 @@ const mongoose = require("mongoose")
      * 3. Check account status
      * 4. Derive sender balance from ledger
      * 5. Create transaction (PENDING)
-     * 6. Create DEBIT ledger entry 
+     * 6. Create DEBIT ledger entry
      * 7. Create CREDIT ledger entry
      * 8. Mark transaction COMPLETED
      * 9. Commit MongoDB session
@@ -48,7 +48,6 @@ async function createTransaction(req, res) {
 
     /**
      * 2. Validate idempotency key
-
      */
 
     const isTransactionAlreadyExists = await transactionModel.findOne({
@@ -159,7 +158,7 @@ async function createTransaction(req, res) {
     /**
      * 10. Send email notification
      */
-    // await emailService.sendTransactionEmail(req.user.email, req.user.name, amount, toAccount)
+    await emailService.sendTransactionEmail(req.user.email, req.user.name, amount, toAccount)
 
     return res.status(201).json({
         message: "Transaction completed successfully",
@@ -233,6 +232,8 @@ async function createInitialFundsTransaction(req, res) {
         message: "Initial funds transaction completed successfully",
         transaction: transaction
     })
+
+
 }
 
 module.exports = {
