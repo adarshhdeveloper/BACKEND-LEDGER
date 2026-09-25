@@ -32,7 +32,7 @@ accountSchema.index({
 })
 
 //function for fetch balance *****************************************************************
-accountSchema.method.getBlance = async function() {
+accountSchema.method.getBalance = async function() {
     accountSchema.methods.getBalance = async function() {
 
         const balanceData = await ledgerModel.aggregate([{
