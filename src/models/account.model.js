@@ -8,6 +8,10 @@ const accountSchema = new mongoose.Schema({
         required: [true, "Account must be associated with a user"],
         index: true //used for searching an user it use B+ tree DS for Seaching 
     },
+    name: {
+        type: String,
+        required: true
+    },
     status: {
         type: String,
         enum: {
@@ -34,17 +38,21 @@ accountSchema.index({
 })
 
 //function for fetch balance *****************************************************************
-accountSchema.methods.getBalance = async function () {
+accountSchema.methods.getBalance = async function() {
 
-    const balanceData = await ledgerModel.aggregate([
-        { $match: { account: this._id } },
+    const balanceData = await ledgerModel.aggregate([{
+            $match: {
+                account: this._id
+            }
+        },
         {
             $group: {
                 _id: null,
                 totalDebit: {
                     $sum: {
-                        $cond: [
-                            { $eq: [ "$type", "DEBIT" ] },
+                        $cond: [{
+                                $eq: ["$type", "DEBIT"]
+                            },
                             "$amount",
                             0
                         ]
@@ -52,8 +60,9 @@ accountSchema.methods.getBalance = async function () {
                 },
                 totalCredit: {
                     $sum: {
-                        $cond: [
-                            { $eq: [ "$type", "CREDIT" ] },
+                        $cond: [{
+                                $eq: ["$type", "CREDIT"]
+                            },
                             "$amount",
                             0
                         ]
@@ -64,7 +73,9 @@ accountSchema.methods.getBalance = async function () {
         {
             $project: {
                 _id: 0,
-                balance: { $subtract: [ "$totalCredit", "$totalDebit" ] }
+                balance: {
+                    $subtract: ["$totalCredit", "$totalDebit"]
+                }
             }
         }
     ])
@@ -73,7 +84,7 @@ accountSchema.methods.getBalance = async function () {
         return 0
     }
 
-    return balanceData[ 0 ].balance
+    return balanceData[0].balance
 
 }
 

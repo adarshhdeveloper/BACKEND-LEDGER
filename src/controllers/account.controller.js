@@ -4,7 +4,8 @@ async function createUsercontroller(req,res){
     const user = req.user
     
     const account = await accountModel.create({
-        user : user._id
+        user : user._id,
+        name: user.name
     })
     res.status(201).json({
         message:"Account has been created ",
